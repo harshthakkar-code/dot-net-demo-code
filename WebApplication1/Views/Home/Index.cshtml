@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    @model WebApplication1.Models.getJson
+}
+<form action="@Url.Action("Index", "Home")" method="post">
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if (ViewBag.jsonData != null)
+    {
+            var jsonData = ViewBag.jsonData as List<WebApplication1.Models.form>;
+@foreach(WebApplication1.Models.form fm in jsonData)
+{
+    if(@fm.type=="text")
+                {
+                    <p>@fm.label</p>
+                    <input type="text" id="textbox2" name="name"/>
+                }
+                else if (@fm.type == "radio")
+                {
+                    <p>@fm.label</p>
+                    foreach (string s in fm.options)
+                    {
+                        <input type="radio" name="rd" value="@s" />
+
+                        @s
+                    }
+
+                }
+                else if (@fm.type == "checkbox")
+                {
+                    <p>@fm.label</p>
+                    foreach (string s in fm.options)
+                    {
+                        <input type="checkbox" name="chk" value="@s" /> @s
+                    }
+                }               
+}
+
+            <br />
+            <br />
+            <input type="button" value="Submit it" id="btnsubmit1" name="btnsubmit1" onclick="createUser(event);" />
+
+            <p id="successMessage" style="color: darkolivegreen;" class="d-none">User created succesfully!</p>
+    }
+
+    <table>
+
+            <tr><td><label>Your Json</label> </td><td><input type="text" id="TextBox1" name="JSONString" class="req" /></td></tr>
+
+                    
+                    <tr><td colspan="2" class="aligncenter"> <input type="submit" value="Submit" id="btnsubmit" name="btnsubmit" onclick="return submitcheck();" /></td></tr>
+
+                </table>
+    
+
+</div></form>
+<script type="text/javascript">
+    
+    function submitcheck() {
+
+        var list = document.getElementsByClassName("req"); var req = 0;
+
+        $("#btnsubmit1").show();
+
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].value.trim() == "") { list[i].classList.add("required"); req++; }
+            else { list[i].classList.remove("required"); }
+        }
+        
+        if (req > 0) return false;
+
+    }
+    function getUserFormValues() {
+        var name = document.getElementById("textbox2").value;
+        var gender;
+        var hobbies = [];
+        var ele = document.getElementsByName('rd');
+
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked)
+                gender = ele[i].value
+        }
+        var ele = document.getElementsByName('chk');
+
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked)
+                hobbies.push(ele[i].value);
+        }
+
+        return { name, gender, hobbies }
+        
+    }
+
+    function createUser(e)
+    {
+        e.preventDefault();
+
+        console.log("test");
+
+        var newUser = getUserFormValues();
+
+        $.ajax({
+            type: "POST",
+            url: "/user/create",
+            data: newUser,
+            success: () => {
+                $("#successMessage").removeClass("d-none");
+                setTimeout(() => $("#successMessage").addClass("d-none"), 2000);
+                resetForm();
+            }
+        });
+    }
+
+    function resetForm(){
+
+        document.getElementById("textbox2").value = "";
+
+        var ele = document.getElementsByName('rd');
+
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked)
+                ele[i].checked = false;
+        }
+        var ele = document.getElementsByName('chk');
+
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked)
+                ele[i].checked = false;
+        }
+    }
+    
+</script>

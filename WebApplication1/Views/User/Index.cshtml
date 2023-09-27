@@ -1,0 +1,42 @@
+﻿@model IEnumerable<WebApplication1.Models.UserViewModel>
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Hobbies
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender!.Gender)
+            </td>
+            <td>
+                @foreach (var hobby in item.Hobbies.Select(x => x.Hobby))
+                {
+                    @Html.DisplayFor(modelItem => hobby)
+                    <br />
+                }                
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
